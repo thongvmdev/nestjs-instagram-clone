@@ -9,26 +9,27 @@
 
 Mark each item with `[x]` when done. Each step has 3 checkboxes: **Read**, **Understood**, **Task done**.
 
-| Step | Topic | Read | Understood | Task |
-|------|-------|------|------------|------|
-| 1 | NestJS Core Concepts & Project Structure | `[ ]` | `[ ]` | `[ ]` |
-| 2 | Request Handling & HTTP Decorators | `[ ]` | `[ ]` | `[ ]` |
-| 3 | Validation & DTOs | `[ ]` | `[ ]` | `[ ]` |
-| 4 | Services, Repositories & TypeORM | `[ ]` | `[ ]` | `[ ]` |
-| 5 | Dependency Injection & IoC | `[ ]` | `[ ]` | `[ ]` |
-| 6 | Cross-Module DI & Module Exports | `[ ]` | `[ ]` | `[ ]` |
-| 7 | JWT Authentication (Guards & Hashing) | `[ ]` | `[ ]` | `[ ]` |
-| 8 | Custom Decorators & Interceptors | `[ ]` | `[ ]` | `[ ]` |
-| 9 | TypeORM Relations (One-to-Many, Many-to-One) | `[ ]` | `[ ]` | `[ ]` |
-| 10 | Composite Primary Keys (Many-to-Many) | `[ ]` | `[ ]` | `[ ]` |
-| 11 | Self-Referential Relations & QueryBuilder | `[ ]` | `[ ]` | `[ ]` |
-| 12 | Many-to-Many with JoinTable (Tags) | `[ ]` | `[ ]` | `[ ]` |
-| 13 | Analytics: QueryBuilder Mastery | `[ ]` | `[ ]` | `[ ]` |
-| 14 | Unit Testing & E2E Testing | `[ ]` | `[ ]` | `[ ]` |
-| 15 | Configuration & Environment Variables | `[ ]` | `[ ]` | `[ ]` |
-| 16 | Migrations & Production Deployment | `[ ]` | `[ ]` | `[ ]` |
+| Step | Topic                                        | Read  | Understood | Task  |
+| ---- | -------------------------------------------- | ----- | ---------- | ----- |
+| 1    | NestJS Core Concepts & Project Structure     | `[ ]` | `[ ]`      | `[ ]` |
+| 2    | Request Handling & HTTP Decorators           | `[ ]` | `[ ]`      | `[ ]` |
+| 3    | Validation & DTOs                            | `[ ]` | `[ ]`      | `[ ]` |
+| 4    | Services, Repositories & TypeORM             | `[ ]` | `[ ]`      | `[ ]` |
+| 5    | Dependency Injection & IoC                   | `[ ]` | `[ ]`      | `[ ]` |
+| 6    | Cross-Module DI & Module Exports             | `[ ]` | `[ ]`      | `[ ]` |
+| 7    | JWT Authentication (Guards & Hashing)        | `[ ]` | `[ ]`      | `[ ]` |
+| 8    | Custom Decorators & Interceptors             | `[ ]` | `[ ]`      | `[ ]` |
+| 9    | TypeORM Relations (One-to-Many, Many-to-One) | `[ ]` | `[ ]`      | `[ ]` |
+| 10   | Composite Primary Keys (Many-to-Many)        | `[ ]` | `[ ]`      | `[ ]` |
+| 11   | Self-Referential Relations & QueryBuilder    | `[ ]` | `[ ]`      | `[ ]` |
+| 12   | Many-to-Many with JoinTable (Tags)           | `[ ]` | `[ ]`      | `[ ]` |
+| 13   | Analytics: QueryBuilder Mastery              | `[ ]` | `[ ]`      | `[ ]` |
+| 14   | Unit Testing & E2E Testing                   | `[ ]` | `[ ]`      | `[ ]` |
+| 15   | Configuration & Environment Variables        | `[ ]` | `[ ]`      | `[ ]` |
+| 16   | Migrations & Production Deployment           | `[ ]` | `[ ]`      | `[ ]` |
+| 17   | CI/CD, Docker, GitHub Registry & Auto-Deploy | `[ ]` | `[ ]`      | `[ ]` |
 
-**Progress:** 0 / 16 steps completed
+**Progress:** 0 / 17 steps completed
 
 ---
 
@@ -52,33 +53,39 @@ Mark each item with `[x]` when done. Each step has 3 checkboxes: **Read**, **Und
 **Course Notes:** §1 (Introduction), §2 (Project Structure)
 
 ### Theory
+
 NestJS apps are built from 5 core building blocks:
 
-| Part | Role | File pattern |
-|------|------|-------------|
-| **Module** | Groups related code together | `*.module.ts` |
-| **Controller** | Handles incoming HTTP requests | `*.controller.ts` |
-| **Service** | Business logic & data access | `*.service.ts` |
-| **Entity** | Describes a DB table | `*.entity.ts` |
-| **DTO** | Describes the shape of request data | `*.dto.ts` |
+| Part           | Role                                | File pattern      |
+| -------------- | ----------------------------------- | ----------------- |
+| **Module**     | Groups related code together        | `*.module.ts`     |
+| **Controller** | Handles incoming HTTP requests      | `*.controller.ts` |
+| **Service**    | Business logic & data access        | `*.service.ts`    |
+| **Entity**     | Describes a DB table                | `*.entity.ts`     |
+| **DTO**        | Describes the shape of request data | `*.dto.ts`        |
 
 The **request lifecycle** flows like this:
+
 ```
 Request → Guard → Interceptor → Pipe (Validation) → Controller → Service → Repository → DB
 ```
 
 ### Files to Read
+
 - `src/main.ts` — entry point, where the app starts
 - `src/app.module.ts` — root module that ties everything together
 - `src/users/users.module.ts` — a typical feature module
 
 ### Understanding Check
+
 - Why does `main.ts` only call `NestFactory.create(AppModule)` and nothing else?
 - What does `@Module({ imports, controllers, providers })` do for each property?
 - Why is `AppModule` the only module imported into `NestFactory.create()`?
 
 ### Hands-On Task
+
 Open `src/users/users.module.ts`. Trace the chain:
+
 1. What does `TypeOrmModule.forFeature([User])` do?
 2. Why is `UsersService` in `providers` AND `exports`?
 3. Which other modules import `UsersModule`? (check `src/auth/auth.module.ts`)
@@ -95,6 +102,7 @@ Open `src/users/users.module.ts`. Trace the chain:
 **Course Notes:** §3 (Request Handling & Decorators)
 
 ### Theory
+
 Controllers use **decorators** to map HTTP methods and extract data from requests:
 
 ```typescript
@@ -110,26 +118,30 @@ export class UsersController {
 
 Parameter decorators extract data from the request:
 
-| Decorator | Extracts |
-|-----------|---------|
-| `@Param('id')` | Route param → `/users/:id` |
-| `@Body()` | Request body JSON |
-| `@Query()` | Query string → `?search=foo` |
-| `@Headers()` | HTTP headers |
+| Decorator      | Extracts                     |
+| -------------- | ---------------------------- |
+| `@Param('id')` | Route param → `/users/:id`   |
+| `@Body()`      | Request body JSON            |
+| `@Query()`     | Query string → `?search=foo` |
+| `@Headers()`   | HTTP headers                 |
 
 ### Files to Read
+
 - `src/users/users.controller.ts` — full CRUD with all decorator types
 - `src/auth/auth.controller.ts` — POST routes + custom `@CurrentUser()` decorator
 - `src/comments/comments.controller.ts` — nested routes like `/photos/:photoId/comments`
 - `src/likes/likes.controller.ts` — controller-level route prefix
 
 ### Understanding Check
+
 - In `users.controller.ts`, what does `@Param('id', ParseIntPipe)` do that plain `@Param('id')` doesn't?
 - In `comments.controller.ts`, why is `@Controller()` empty but the method decorators have full paths?
 - In `likes.controller.ts`, the class has `@Controller('photos/:photoId/likes')` — how does this combine with `@Post()` on the method?
 
 ### Hands-On Task
+
 Look at `src/follows/follows.controller.ts`. Map each method to its full HTTP route:
+
 - `follow()` → ?
 - `unfollow()` → ?
 - `getFollowers()` → ?
@@ -147,6 +159,7 @@ Look at `src/follows/follows.controller.ts`. Map each method to its full HTTP ro
 **Course Notes:** §4 (Validation & DTOs)
 
 ### Theory
+
 **DTOs (Data Transfer Objects)** describe the expected shape of incoming data. Combined with `ValidationPipe`, they automatically reject bad requests.
 
 ```
@@ -157,15 +170,19 @@ POST /auth/signup { username: "ab", password: "123" }
 ```
 
 The `ValidationPipe` is configured globally in `main.ts`:
+
 ```typescript
-app.useGlobalPipes(new ValidationPipe({
-  whitelist: true,           // strip unknown properties
-  forbidNonWhitelisted: true, // error if unknown properties sent
-  transform: true,           // auto-convert types (string "5" → number 5)
-}))
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true, // strip unknown properties
+    forbidNonWhitelisted: true, // error if unknown properties sent
+    transform: true, // auto-convert types (string "5" → number 5)
+  }),
+);
 ```
 
 ### Files to Read
+
 - `src/main.ts` — global `ValidationPipe` setup
 - `src/auth/dtos/auth.dto.ts` — `SignUpDto` and `SignInDto`
 - `src/users/dtos/create-user.dto.ts` — `@IsString`, `@MinLength`
@@ -173,12 +190,15 @@ app.useGlobalPipes(new ValidationPipe({
 - `src/photos/dtos/create-photo.dto.ts` — simple DTO
 
 ### Understanding Check
+
 - What is `whitelist: true` protecting against? Give a concrete example.
 - Why does `UpdateUserDto` use `@IsOptional()` on every field?
 - What happens if you send `{ username: "alice", password: "secret", isAdmin: true }` to `POST /auth/signup`?
 
 ### Hands-On Task
+
 Open `src/auth/dtos/auth.dto.ts`. Try to think about what would happen with these requests:
+
 1. `POST /auth/signup { username: "ab", password: "password123" }` — what error?
 2. `POST /auth/signup { username: "alice" }` — what error?
 3. `POST /auth/signup { username: "alice", password: "secret123", extra: "field" }` — what happens?
@@ -195,47 +215,52 @@ Open `src/auth/dtos/auth.dto.ts`. Try to think about what would happen with thes
 **Course Notes:** §5 (Services & Repositories), §11 (TypeORM Entities), §12 (Repository API)
 
 ### Theory
+
 **Entities** describe your database tables using decorators:
 
 ```typescript
-@Entity('users')         // maps to 'users' table in DB
+@Entity('users') // maps to 'users' table in DB
 export class User {
-  @PrimaryGeneratedColumn()   // auto-increment id
+  @PrimaryGeneratedColumn() // auto-increment id
   id: number;
 
-  @Column({ unique: true })   // NOT NULL UNIQUE column
+  @Column({ unique: true }) // NOT NULL UNIQUE column
   username: string;
 
-  @CreateDateColumn()         // auto-set on INSERT
+  @CreateDateColumn() // auto-set on INSERT
   created_at: Date;
 }
 ```
 
 **Services** use TypeORM's `Repository<T>` to interact with the DB:
 
-| Repository Method | What it does |
-|------------------|-------------|
-| `repo.create({})` | Creates entity instance (NOT saved yet) |
-| `repo.save(entity)` | INSERT or UPDATE (triggers hooks) |
-| `repo.findOne({ where: {} })` | SELECT with filter |
-| `repo.find({ where: {} })` | SELECT multiple |
-| `repo.remove(entity)` | DELETE (triggers hooks) |
+| Repository Method             | What it does                            |
+| ----------------------------- | --------------------------------------- |
+| `repo.create({})`             | Creates entity instance (NOT saved yet) |
+| `repo.save(entity)`           | INSERT or UPDATE (triggers hooks)       |
+| `repo.findOne({ where: {} })` | SELECT with filter                      |
+| `repo.find({ where: {} })`    | SELECT multiple                         |
+| `repo.remove(entity)`         | DELETE (triggers hooks)                 |
 
 > **Key rule:** Always use `save()` and `remove()` (not `insert()`/`update()`/`delete()`) so TypeORM lifecycle hooks fire.
 
 ### Files to Read
+
 - `src/users/user.entity.ts` — User entity with all relation decorators
 - `src/users/users.service.ts` — full CRUD using Repository API
 - `src/photos/photo.entity.ts` — entity with `@Column()`, `@ManyToOne`, `@JoinColumn`
 - `src/likes/like.entity.ts` — entity with composite primary key
 
 ### Understanding Check
+
 - In `users.service.ts`, why does `create()` call `repo.create()` then `repo.save()` instead of just `repo.save()`?
 - In `like.entity.ts`, there is no `@PrimaryGeneratedColumn()`. What prevents duplicate likes?
 - In `users.service.ts`, the `update()` method uses `Object.assign(user, attrs)` then `repo.save(user)`. Why not just `repo.update(id, attrs)`?
 
 ### Hands-On Task
+
 Open `src/photos/photos.service.ts`. For each method, identify:
+
 1. Which Repository method it calls
 2. What it returns
 3. What error it throws if the record isn't found
@@ -252,6 +277,7 @@ Open `src/photos/photos.service.ts`. For each method, identify:
 **Course Notes:** §6 (DI), §7 (IoC), §9 (DI Container Deep Dive)
 
 ### Theory
+
 **Inversion of Control:** classes should NOT create their own dependencies.
 
 ```typescript
@@ -269,6 +295,7 @@ class AuthService {
 ```
 
 **How the DI Container works:**
+
 1. At startup, Nest reads all `providers: []` arrays in modules
 2. It builds a dependency graph
 3. When a class is needed, Nest creates it and injects all its dependencies
@@ -277,18 +304,22 @@ class AuthService {
 **Why this matters for testing:** You can swap `UsersService` for a `FakeUsersService` without changing `AuthService` at all.
 
 ### Files to Read
+
 - `src/auth/auth.service.ts` — depends on `UsersService` + `JwtService`
 - `src/auth/auth.module.ts` — wires up the DI container for the auth feature
 - `src/users/users.module.ts` — `exports: [UsersService]` makes it available to other modules
 - `src/auth/auth.service.spec.ts` — **unit test using a fake UsersService**
 
 ### Understanding Check
+
 - In `auth.module.ts`, why is `UsersModule` in `imports` rather than `UsersService` in `providers`?
 - In `auth.service.spec.ts`, what is `fakeUsersService`? Why is it used instead of the real one?
 - If you removed `exports: [UsersService]` from `users.module.ts`, what would break and why?
 
 ### Hands-On Task
+
 Read `src/auth/auth.service.spec.ts` carefully. Answer:
+
 1. How does the test create an `AuthService` without a real database?
 2. What does `jest.fn()` do? Why is it used on `findByUsername` and `create`?
 3. The test `'hashes the password before saving'` uses `mockImplementation`. What is it checking?
@@ -305,6 +336,7 @@ Read `src/auth/auth.service.spec.ts` carefully. Answer:
 **Course Notes:** §19 (Modules & Cross-Module DI), §20 (Advanced DI)
 
 ### Theory
+
 Each module has its own **DI container**. To share a service between modules:
 
 ```
@@ -318,6 +350,7 @@ AuthModule
 ```
 
 This project has a clear dependency graph:
+
 ```
 AppModule
   ├── UsersModule (exports UsersService)
@@ -331,6 +364,7 @@ AppModule
 ```
 
 ### Files to Read
+
 - `src/users/users.module.ts` — `exports: [UsersService]`
 - `src/auth/auth.module.ts` — `imports: [UsersModule]`
 - `src/follows/follows.module.ts` — imports TWO entities (`Follow` + `Photo`)
@@ -338,12 +372,15 @@ AppModule
 - `src/app.module.ts` — the root module that imports everything
 
 ### Understanding Check
+
 - Why does `FollowsModule` need to import `Photo` entity even though follows don't contain photos?
 - `AnalyticsModule` doesn't import any entity via `TypeOrmModule.forFeature()`. How does `AnalyticsService` still access the database?
 - What would happen if `UsersModule` didn't export `UsersService` but `AuthModule` still tried to inject it?
 
 ### Hands-On Task
+
 Trace the dependency chain for `GET /auth/me`:
+
 1. `AuthController` → needs `AuthService` → provided by `AuthModule`
 2. `AuthService` → needs `UsersService` → provided by... where?
 3. `JwtStrategy` → needs `UsersService` AND `ConfigService` → where do these come from?
@@ -360,9 +397,11 @@ Trace the dependency chain for `GET /auth/me`:
 **Course Notes:** §15 (Authentication & Hashing), §16 (Guards & Authorization)
 
 ### Theory
+
 This project uses **JWT Bearer tokens** instead of cookies (the course uses cookies, but JWT is more modern for APIs).
 
 **Signup flow:**
+
 ```
 POST /auth/signup { username, password }
   1. Check if username exists → 400 if yes
@@ -374,6 +413,7 @@ POST /auth/signup { username, password }
 ```
 
 **Protected route flow:**
+
 ```
 GET /auth/me
 Authorization: Bearer eyJ...
@@ -385,6 +425,7 @@ Authorization: Bearer eyJ...
 ```
 
 **Guards** return `true` (allow) or `false`/throw (deny):
+
 ```typescript
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {}
@@ -392,6 +433,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {}
 ```
 
 ### Files to Read
+
 - `src/auth/auth.service.ts` — `signup()` and `signin()` with bcrypt
 - `src/auth/jwt.strategy.ts` — validates JWT, returns user from DB
 - `src/auth/jwt-auth.guard.ts` — the guard that protects routes
@@ -399,12 +441,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {}
 - `src/photos/photos.controller.ts` — `@UseGuards(JwtAuthGuard)` on POST/DELETE
 
 ### Understanding Check
+
 - In `auth.service.ts`, why is `bcrypt.genSalt(10)` called separately instead of just `bcrypt.hash(password, 10)`?
 - In `jwt.strategy.ts`, the `validate()` method receives `{ sub, username }`. Where does this payload come from originally?
 - In `photos.controller.ts`, `GET /photos` has no guard but `POST /photos` does. What does this mean for unauthenticated users?
 
 ### Hands-On Task
+
 Trace what happens when an expired JWT is sent to `GET /auth/me`:
+
 1. Where is `ignoreExpiration: false` set?
 2. What does Passport do when the token is expired?
 3. What HTTP status code does the client receive?
@@ -421,6 +466,7 @@ Trace what happens when an expired JWT is sent to `GET /auth/me`:
 **Course Notes:** §14 (Interceptors & Serialization)
 
 ### Theory
+
 **The problem:** When you return a `User` entity from a controller, it includes the `password` field. That's a security leak.
 
 **The solution:** A custom `@Serialize(Dto)` decorator + interceptor that transforms the response:
@@ -434,6 +480,7 @@ Controller returns User entity { id, username, password, created_at }
 ```
 
 **`@CurrentUser()` param decorator** reads `request.user` (set by JwtStrategy):
+
 ```typescript
 @Get('me')
 @UseGuards(JwtAuthGuard)
@@ -443,6 +490,7 @@ me(@CurrentUser() user: User) {  // ← reads request.user
 ```
 
 ### Files to Read
+
 - `src/interceptors/serialize.interceptor.ts` — the `@Serialize()` decorator + `SerializeInterceptor`
 - `src/users/dtos/user.dto.ts` — `@Expose()` fields, `@Exclude()` is implicit
 - `src/photos/dtos/photo.dto.ts` — nested DTO with `@Type()`
@@ -450,12 +498,15 @@ me(@CurrentUser() user: User) {  // ← reads request.user
 - `src/users/users.controller.ts` — `@Serialize(UserDto)` on class level
 
 ### Understanding Check
+
 - In `serialize.interceptor.ts`, what does `excludeExtraneousValues: true` do? What happens without it?
 - In `user.dto.ts`, the `password` field is not listed at all. Why does it get excluded from the response?
 - In `users.controller.ts`, `@Serialize(UserDto)` is on the class but `findOne()` has `@Serialize(UserProfileDto)`. Which one wins for `GET /users/:id`?
 
 ### Hands-On Task
+
 Open `src/photos/dtos/photo.dto.ts`. The `user` field uses `@Type(() => PhotoUserDto)`.
+
 1. What does `@Type()` do here?
 2. If you removed `@Type(() => PhotoUserDto)`, would the nested user object still be serialized correctly?
 3. What fields would be in the response for `GET /photos/:id`?
@@ -472,6 +523,7 @@ Open `src/photos/dtos/photo.dto.ts`. The `user` field uses `@Type(() => PhotoUse
 **Course Notes:** §13 (Associations / Relations) — Part 1
 
 ### Theory
+
 **One-to-Many / Many-to-One** is the most common relation. A User has many Photos; a Photo belongs to one User.
 
 ```typescript
@@ -488,11 +540,13 @@ user: User;
 ```
 
 > **Critical:** Relations are NOT auto-fetched. You must explicitly request them:
+>
 > ```typescript
-> repo.findOne({ where: { id }, relations: ['user'] })  // explicit
+> repo.findOne({ where: { id }, relations: ['user'] }); // explicit
 > ```
 
 ### Files to Read
+
 - `src/users/user.entity.ts` — all `@OneToMany` relations
 - `src/photos/photo.entity.ts` — `@ManyToOne` to User, `@OneToMany` to Comments/Likes
 - `src/comments/comment.entity.ts` — two `@ManyToOne` (User + Photo) = triangle relation
@@ -500,15 +554,19 @@ user: User;
 - `src/comments/comments.service.ts` — `relations: ['user']` when fetching comments
 
 ### Understanding Check
+
 - In `photo.entity.ts`, there is both a `user: User` relation AND a `user_id: number` column. Why have both? When would you use `user_id` directly instead of `user`?
 - The `@JoinColumn({ name: 'user_id' })` on `Photo` — what does this do to the database?
 - In `comments.service.ts`, `findByPhoto()` fetches with `relations: ['user']` but not `relations: ['photo']`. Why is `photo` not needed here?
 
 ### Hands-On Task
+
 Look at `src/comments/comment.entity.ts`. This is the "triangle" relation:
+
 ```
 User ──── Comment ──── Photo
 ```
+
 1. Draw the database schema: which table has which foreign keys?
 2. In `comments.service.ts`, when creating a comment, you pass `user_id` and `photo_id` directly. Why not pass the full `user` and `photo` objects?
 3. What does `onDelete: 'CASCADE'` mean? What happens to comments when a photo is deleted?
@@ -525,15 +583,16 @@ User ──── Comment ──── Photo
 **Course Notes:** §13 (Associations / Relations) — Part 2
 
 ### Theory
+
 For **Many-to-Many** relationships where the junction table has no extra attributes, use a **composite primary key** instead of an auto-increment ID.
 
 ```typescript
 @Entity('likes')
 export class Like {
-  @PrimaryColumn()   // part 1 of composite PK
+  @PrimaryColumn() // part 1 of composite PK
   user_id: number;
 
-  @PrimaryColumn()   // part 2 of composite PK
+  @PrimaryColumn() // part 2 of composite PK
   photo_id: number;
 }
 // The DB enforces: (user_id=1, photo_id=5) can only exist ONCE
@@ -541,18 +600,22 @@ export class Like {
 ```
 
 ### Files to Read
+
 - `src/likes/like.entity.ts` — composite PK with `@PrimaryColumn()`
 - `src/likes/likes.service.ts` — `ConflictException` for duplicate likes
 - `src/follows/follow.entity.ts` — same pattern for follows
 - `src/follows/follows.service.ts` — self-follow prevention + `ConflictException`
 
 ### Understanding Check
+
 - In `likes.service.ts`, the `like()` method first checks if a like exists, then throws `ConflictException`. But the composite PK would also prevent duplicates at the DB level. Why check in the service too?
 - In `follows.service.ts`, there's a check `if (followerId === followeeId)`. What would happen at the DB level without this check?
 - What is the difference between `@PrimaryColumn()` and `@PrimaryGeneratedColumn()`?
 
 ### Hands-On Task
+
 Compare `like.entity.ts` and `follow.entity.ts`:
+
 1. Both use composite PKs — what are the two columns in each?
 2. Both have `@ManyToOne` relations — what entities do they point to?
 3. `follow.entity.ts` has TWO `@ManyToOne` relations pointing to the SAME `User` entity. How does TypeORM know which is which?
@@ -569,6 +632,7 @@ Compare `like.entity.ts` and `follow.entity.ts`:
 **Course Notes:** §13 (Associations / Relations) — Part 3
 
 ### Theory
+
 The **Follows** system is a **self-referential Many-to-Many** — the `users` table references itself:
 
 ```
@@ -583,6 +647,7 @@ follows table
 ```
 
 The `User` entity has TWO `@OneToMany` relations to `Follow`:
+
 ```typescript
 @OneToMany(() => Follow, (follow) => follow.follower)
 following: Follow[];  // follows where I am the follower
@@ -592,6 +657,7 @@ followers: Follow[];  // follows where I am the followee
 ```
 
 **QueryBuilder** is used for complex queries that can't be expressed with simple `find()`:
+
 ```typescript
 // Feed: get photos from users I follow
 photosRepository
@@ -599,32 +665,39 @@ photosRepository
   .innerJoin('follows', 'f', 'f.followee_id = photo.user_id')
   .where('f.follower_id = :userId', { userId })
   .orderBy('photo.created_at', 'DESC')
-  .getMany()
+  .getMany();
 ```
 
 ### Files to Read
+
 - `src/follows/follow.entity.ts` — self-referential with named relations
 - `src/users/user.entity.ts` — `following` and `followers` `@OneToMany`
 - `src/follows/follows.service.ts` — `getFeed()` using QueryBuilder with JOIN
 
 ### Understanding Check
+
 - In `user.entity.ts`, `following` and `followers` both point to `Follow`. How does TypeORM distinguish them?
 - In `follows.service.ts` `getFeed()`, the join is `'f.followee_id = photo.user_id'`. Explain this in plain English: "Get photos where..."
 - Why does `getFeed()` use `innerJoin` (not `leftJoin`)? What would change if you used `leftJoin`?
 
 ### Hands-On Task
+
 Read `src/follows/follows.service.ts` `getFeed()` carefully:
+
 ```typescript
 .innerJoin('follows', 'f', 'f.followee_id = photo.user_id')
 .where('f.follower_id = :userId', { userId })
 ```
+
 Translate this to SQL mentally:
+
 ```sql
 SELECT photo.*
 FROM photos photo
 INNER JOIN follows f ON f.followee_id = photo.user_id
 WHERE f.follower_id = ?
 ```
+
 1. If I (userId=1) follow Alice (id=2) and Bob (id=3), what photos appear in my feed?
 2. What does `.limit(50)` do? Why is this important for a feed?
 
@@ -640,6 +713,7 @@ WHERE f.follower_id = ?
 **Course Notes:** §13 (Associations / Relations) — Part 4
 
 ### Theory
+
 TypeORM's `@ManyToMany` + `@JoinTable` automatically manages a junction table:
 
 ```typescript
@@ -660,6 +734,7 @@ photos: Photo[];
 The `@JoinTable()` decorator goes on ONE side only (the "owner"). TypeORM creates the `photo_tags` junction table automatically.
 
 **Find-or-create pattern** avoids duplicate tags:
+
 ```typescript
 let tag = await tagsRepo.findOne({ where: { tag_name } });
 if (!tag) {
@@ -668,28 +743,35 @@ if (!tag) {
 ```
 
 ### Files to Read
+
 - `src/photos/photo.entity.ts` — `@ManyToMany` + `@JoinTable` (owner side)
 - `src/tags/tag.entity.ts` — `@ManyToMany` (inverse side, no `@JoinTable`)
 - `src/tags/tags.service.ts` — `findOrCreate()`, `addTagToPhoto()`, `getTrending()`
 
 ### Understanding Check
+
 - Why does `@JoinTable()` only appear in `photo.entity.ts` and not in `tag.entity.ts`?
 - In `tags.service.ts` `addTagToPhoto()`, why do we fetch the photo with `relations: ['tags']` before adding a new tag?
 - In `getTrending()`, the query uses `innerJoin('photo_tags', 'pt', ...)` — but `photo_tags` is not an entity class. How does TypeORM know what table to join?
 
 ### Hands-On Task
+
 Read `src/tags/tags.service.ts` `getTrending()`:
+
 ```typescript
-tagsRepository.createQueryBuilder('tag')
+tagsRepository
+  .createQueryBuilder('tag')
   .innerJoin('photo_tags', 'pt', 'pt.tag_id = tag.id')
   .select('tag.tag_name', 'tag_name')
   .addSelect('COUNT(pt.photo_id)', 'count')
   .groupBy('tag.id')
   .orderBy('count', 'DESC')
   .limit(5)
-  .getRawMany()
+  .getRawMany();
 ```
+
 Translate to SQL:
+
 ```sql
 SELECT tag.tag_name, COUNT(pt.photo_id) AS count
 FROM tags tag
@@ -698,6 +780,7 @@ GROUP BY tag.id
 ORDER BY count DESC
 LIMIT 5;
 ```
+
 Compare this to Challenge 6 in `docs/instagram-database-clone.md`. They're the same query!
 
 ---
@@ -712,44 +795,48 @@ Compare this to Challenge 6 in `docs/instagram-database-clone.md`. They're the s
 **Course Notes:** §13 (QueryBuilder: `.where`, `.having`, `.groupBy`, `.orderBy`, `.getRawMany`)
 
 ### Theory
+
 The **Analytics module** translates the 7 SQL challenges from `docs/instagram-database-clone.md` into TypeORM QueryBuilder calls.
 
 Key QueryBuilder methods:
 
-| Method | SQL equivalent |
-|--------|---------------|
-| `.select('col', 'alias')` | `SELECT col AS alias` |
-| `.addSelect('COUNT(*)', 'n')` | `, COUNT(*) AS n` |
-| `.from('table', 'alias')` | `FROM table alias` |
-| `.innerJoin(...)` | `INNER JOIN ...` |
-| `.leftJoin(...)` | `LEFT JOIN ...` |
-| `.where('col = :val', { val })` | `WHERE col = ?` |
-| `.groupBy('col')` | `GROUP BY col` |
-| `.having('COUNT(*) = :n', { n })` | `HAVING COUNT(*) = ?` |
-| `.orderBy('col', 'DESC')` | `ORDER BY col DESC` |
-| `.limit(5)` | `LIMIT 5` |
-| `.getRawMany()` | Execute → return raw rows |
+| Method                            | SQL equivalent            |
+| --------------------------------- | ------------------------- |
+| `.select('col', 'alias')`         | `SELECT col AS alias`     |
+| `.addSelect('COUNT(*)', 'n')`     | `, COUNT(*) AS n`         |
+| `.from('table', 'alias')`         | `FROM table alias`        |
+| `.innerJoin(...)`                 | `INNER JOIN ...`          |
+| `.leftJoin(...)`                  | `LEFT JOIN ...`           |
+| `.where('col = :val', { val })`   | `WHERE col = ?`           |
+| `.groupBy('col')`                 | `GROUP BY col`            |
+| `.having('COUNT(*) = :n', { n })` | `HAVING COUNT(*) = ?`     |
+| `.orderBy('col', 'DESC')`         | `ORDER BY col DESC`       |
+| `.limit(5)`                       | `LIMIT 5`                 |
+| `.getRawMany()`                   | Execute → return raw rows |
 
 ### Files to Read
+
 - `src/analytics/analytics.service.ts` — all 7 challenge queries
 - `docs/instagram-database-clone.md` — the original SQL challenges (Part: SQL Challenge Questions)
 
 ### Understanding Check — Match Each Method to Its SQL Challenge
 
-| Analytics endpoint | SQL Challenge # |
-|-------------------|----------------|
-| `getOldestUsers()` | Challenge ? |
-| `getPopularSignupDay()` | Challenge ? |
-| `getInactiveUsers()` | Challenge ? |
-| `getMostLikedPhoto()` | Challenge ? |
-| `getAvgPostsPerUser()` | Challenge ? |
-| `getTopHashtags()` | Challenge ? |
-| `getBotAccounts()` | Challenge ? |
+| Analytics endpoint      | SQL Challenge # |
+| ----------------------- | --------------- |
+| `getOldestUsers()`      | Challenge ?     |
+| `getPopularSignupDay()` | Challenge ?     |
+| `getInactiveUsers()`    | Challenge ?     |
+| `getMostLikedPhoto()`   | Challenge ?     |
+| `getAvgPostsPerUser()`  | Challenge ?     |
+| `getTopHashtags()`      | Challenge ?     |
+| `getBotAccounts()`      | Challenge ?     |
 
 ### Hands-On Task
+
 Open `src/analytics/analytics.service.ts` and `docs/instagram-database-clone.md` side by side.
 
 For `getBotAccounts()`:
+
 ```typescript
 dataSource.query(`
   SELECT u.id, u.username, COUNT(l.photo_id) AS like_count
@@ -757,8 +844,9 @@ dataSource.query(`
   INNER JOIN likes l ON l.user_id = u.id
   GROUP BY u.id
   HAVING like_count = (SELECT COUNT(*) FROM photos)
-`)
+`);
 ```
+
 Compare to Challenge 7 in the docs. They're identical SQL!
 
 Now try to rewrite `getInactiveUsers()` using raw SQL instead of QueryBuilder. Then compare.
@@ -775,6 +863,7 @@ Now try to rewrite `getInactiveUsers()` using raw SQL instead of QueryBuilder. T
 **Course Notes:** §17 (Unit & E2E Testing)
 
 ### Theory
+
 **Unit tests** test a single class in isolation. Dependencies are replaced with fakes:
 
 ```typescript
@@ -786,27 +875,33 @@ AuthService ← FakeUsersService (returns hardcoded data, no DB)
 ```
 
 **E2E tests** test the full HTTP flow:
+
 ```
 Test → HTTP request → NestJS app → DB → HTTP response → Assert
 ```
 
 **Jest mock functions** (`jest.fn()`) record calls and can return custom values:
+
 ```typescript
 const findByUsername = jest.fn().mockResolvedValue(null); // returns null
 const create = jest.fn().mockResolvedValue({ id: 1, username: 'alice' });
 ```
 
 ### Files to Read
+
 - `src/auth/auth.service.spec.ts` — unit tests with fake UsersService
 - `test/auth.e2e-spec.ts` — E2E tests for the full auth flow
 
 ### Understanding Check
+
 - In `auth.service.spec.ts`, `fakeUsersService` is typed as `Partial<UsersService>`. Why `Partial`?
 - The test `'throws if username is already taken'` sets `findByUsername` to return a user. What is it simulating?
 - In `test/auth.e2e-spec.ts`, why is `beforeAll` used instead of `beforeEach`? What would happen if each test created a new app?
 
 ### Hands-On Task
+
 Read the unit test for `'hashes the password before saving'`:
+
 ```typescript
 (fakeUsersService.create as jest.Mock).mockImplementation(
   (username: string, password: string) => {
@@ -816,6 +911,7 @@ Read the unit test for `'hashes the password before saving'`:
   },
 );
 ```
+
 1. What is this test verifying?
 2. Why does it check `password.length > 20` instead of checking the exact hash?
 3. Can you write a new unit test for `signin()` that verifies it returns an `access_token`?
@@ -832,6 +928,7 @@ Read the unit test for `'hashes the password before saving'`:
 **Course Notes:** §18 (Configuration & Environment Variables)
 
 ### Theory
+
 `ConfigModule` + `ConfigService` lets you read environment variables safely:
 
 ```typescript
@@ -844,12 +941,14 @@ const secret = configService.get<string>('JWT_SECRET', 'fallback');
 ```
 
 **Environment-based behavior:**
+
 ```
 NODE_ENV=development → synchronize: true  (auto-create tables)
 NODE_ENV=production  → synchronize: false (use migrations)
 ```
 
 ### Files to Read
+
 - `.env` — development environment variables
 - `.env.test` — test environment variables
 - `src/app.module.ts` — `TypeOrmModule.forRootAsync()` using `ConfigService`
@@ -857,12 +956,15 @@ NODE_ENV=production  → synchronize: false (use migrations)
 - `src/auth/jwt.strategy.ts` — `configService.get('JWT_SECRET')`
 
 ### Understanding Check
+
 - In `app.module.ts`, why is `TypeOrmModule.forRootAsync()` used instead of `TypeOrmModule.forRoot()`?
 - What does `isGlobal: true` in `ConfigModule.forRoot()` do? What would you need to do without it?
 - The `synchronize` flag is `configService.get('NODE_ENV') !== 'production'`. What are the three possible states (dev/test/prod) and what does `synchronize` equal in each?
 
 ### Hands-On Task
+
 Open `.env` and `.env.test`. Compare the two files:
+
 1. What is different between them?
 2. What would happen if you ran E2E tests against the development database?
 3. How would you add a new environment variable `MAX_PHOTO_SIZE=10mb`? Where would you add it and how would you read it in a service?
@@ -879,9 +981,11 @@ Open `.env` and `.env.test`. Compare the two files:
 **Course Notes:** §21 (Migrations & Deployment)
 
 ### Theory
+
 `synchronize: true` is **dangerous in production** — it can drop columns and lose data.
 
 **Migrations** are the safe alternative:
+
 ```
 Migration File
   up()   → ALTER TABLE users ADD COLUMN bio VARCHAR(255)
@@ -904,6 +1008,7 @@ Production deploy:
 ```
 
 ### What to Do
+
 This project currently uses `synchronize: true` for development (appropriate for learning). To prepare for production:
 
 1. Set `synchronize: false` in `app.module.ts`
@@ -912,40 +1017,250 @@ This project currently uses `synchronize: true` for development (appropriate for
 4. Run migrations: `npx typeorm migration:run -d data-source.ts`
 
 ### Files to Read
+
 - `src/app.module.ts` — the `synchronize` flag
 - `docs/nestjs-course-notes.md` §21 — migration concepts
 
 ### Understanding Check
+
 - Why is `synchronize: true` dangerous in production but fine in development?
 - What is the difference between `migration:generate` and `migration:create`?
 - If you add a new `@Column() bio: string` to the User entity with `synchronize: false`, what happens when you start the app?
 
 ---
 
+## Step 17 — CI/CD, Docker, GitHub Registry & Auto-Deploy
+
+- [ ] Read theory
+- [ ] Open and read the files
+- [ ] Answer Understanding Check questions
+- [ ] Complete Hands-On Task
+- [ ] Apply unit-test for all
+
+**Course Notes:** §21 (Deployment), DevOps best practices
+
+### Theory
+
+**Docker** packages your app + runtime into an image. Benefits:
+
+- Same environment everywhere (dev, CI, production)
+- No “works on my machine” — predictable builds
+
+**GitHub Container Registry (GHCR)** stores Docker images:
+
+- `ghcr.io/<org>/<repo>:<tag>`
+- Works with GitHub Actions — no separate registry setup
+
+**CI/CD pipeline** automates:
+
+1. **CI (Continuous Integration):** On every push/PR → run lint, **unit tests**, **e2e tests**, build
+2. **CD (Continuous Deployment):** On merge to `main` → build image → push to GHCR → (optionally) deploy
+
+**Pipeline flow:**
+
+```
+Push/PR → GitHub Action triggers
+  → checkout code
+  → pnpm install
+  → pnpm lint
+  → pnpm test          (unit tests)
+  → pnpm run test:e2e  (e2e tests — requires MySQL service)
+  → pnpm build
+  → (if main) docker build
+  → (if main) docker push ghcr.io/...
+  → (optional) deploy to Railway/Render/Fly.io
+```
+
+### Files to Create
+
+#### 1. `Dockerfile` (multi-stage for smaller image)
+
+```dockerfile
+# Stage 1: Build
+FROM node:20-alpine AS builder
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm build
+
+# Stage 2: Run
+FROM node:20-alpine
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./
+
+ENV NODE_ENV=production
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
+```
+
+#### 2. `.dockerignore` (keep image small)
+
+```
+node_modules
+dist
+.git
+.env
+.env.*
+*.md
+test
+coverage
+```
+
+#### 3. `.github/workflows/ci-cd.yml`
+
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: instagram_clone_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - name: Run e2e tests
+        run: pnpm run test:e2e
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USERNAME: root
+          DB_PASSWORD: ''
+          DB_NAME: instagram_clone_test
+          JWT_SECRET: test-secret
+          NODE_ENV: test
+      - run: pnpm build
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: ci
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+```
+
+### Understanding Check
+
+- Why does the Dockerfile use two stages (builder + run)? What would change if you used one stage?
+- What does `GITHUB_TOKEN` provide in the `docker/login-action`? Where does it come from?
+- In the workflow, why does `build-and-push` have `needs: ci`? What happens if lint or tests fail?
+- What does `--frozen-lockfile` do? Why use it in CI?
+- Why does the `ci` job include a MySQL `services` block? Which tests need it?
+
+### Hands-On Task
+
+1. Create the `Dockerfile`, `.dockerignore`, and workflow file above.
+2. Build locally: `docker build -t instagram-api:local .`
+3. Run locally: `docker run -p 3000:3000 --env-file .env instagram-api:local` (ensure MySQL is reachable, e.g. `host.docker.internal` for Mac).
+4. Push to GitHub and verify the Actions run. Check that the image appears under **Packages** in your repo.
+5. (Optional) Add a deploy job that pulls the image and deploys to Railway, Render, or Fly.io using their GitHub integration or CLI.
+
+### Auto-Deploy Options
+
+| Platform | Approach                                               |
+| -------- | ------------------------------------------------------ |
+| Railway  | Connect repo → auto-deploy on push; set `DATABASE_URL` |
+| Render   | New Web Service → link GitHub → add env vars           |
+| Fly.io   | `fly launch` + `fly deploy`; add `fly.toml`            |
+| AWS ECS  | Use OIDC + `aws-actions/amazon-ecr-login`; deploy task |
+
+For the NestJS app, ensure `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` are set as secrets/env vars in the deployment target.
+
+---
+
 ## Summary: Course Concepts → Project Files
 
-| Course Section | Key Concept | Where in Project |
-|---------------|-------------|-----------------|
-| §1 Intro | Core parts of Nest | `src/app.module.ts`, `src/main.ts` |
-| §2 Structure | File naming conventions | All `*.module.ts`, `*.service.ts`, `*.controller.ts` |
-| §3 Request Handling | HTTP decorators | `src/users/users.controller.ts` |
-| §4 Validation | DTOs + ValidationPipe | `src/users/dtos/`, `src/auth/dtos/`, `src/main.ts` |
-| §5 Services | Repository pattern | `src/users/users.service.ts` |
-| §6 DI | `@Injectable()` + providers | `src/auth/auth.module.ts` |
-| §7 IoC | Constructor injection | `src/auth/auth.service.ts` |
-| §9 DI Container | Module providers/exports | `src/users/users.module.ts` |
-| §11 TypeORM Entities | `@Entity`, `@Column` | `src/users/user.entity.ts` |
-| §12 Repository API | `find`, `save`, `remove` | `src/users/users.service.ts` |
-| §13 Relations | One-to-Many, Many-to-Many | `src/photos/photo.entity.ts`, `src/tags/tag.entity.ts` |
-| §13 QueryBuilder | Complex queries | `src/analytics/analytics.service.ts`, `src/follows/follows.service.ts` |
-| §14 Interceptors | `@Serialize()`, `@CurrentUser()` | `src/interceptors/serialize.interceptor.ts`, `src/auth/decorators/` |
-| §15 Auth/Hashing | bcrypt + JWT | `src/auth/auth.service.ts` |
-| §16 Guards | `JwtAuthGuard` | `src/auth/jwt-auth.guard.ts`, `src/auth/jwt.strategy.ts` |
-| §17 Testing | Unit + E2E | `src/auth/auth.service.spec.ts`, `test/auth.e2e-spec.ts` |
-| §18 Config | `ConfigModule` + `.env` | `src/app.module.ts`, `.env` |
-| §19 Modules | Cross-module DI | `src/auth/auth.module.ts` imports `UsersModule` |
-| §20 Advanced DI | DI container internals | `src/follows/follows.module.ts` (multi-entity) |
-| §21 Migrations | `synchronize` flag | `src/app.module.ts` |
+| Course Section       | Key Concept                      | Where in Project                                                       |
+| -------------------- | -------------------------------- | ---------------------------------------------------------------------- |
+| §1 Intro             | Core parts of Nest               | `src/app.module.ts`, `src/main.ts`                                     |
+| §2 Structure         | File naming conventions          | All `*.module.ts`, `*.service.ts`, `*.controller.ts`                   |
+| §3 Request Handling  | HTTP decorators                  | `src/users/users.controller.ts`                                        |
+| §4 Validation        | DTOs + ValidationPipe            | `src/users/dtos/`, `src/auth/dtos/`, `src/main.ts`                     |
+| §5 Services          | Repository pattern               | `src/users/users.service.ts`                                           |
+| §6 DI                | `@Injectable()` + providers      | `src/auth/auth.module.ts`                                              |
+| §7 IoC               | Constructor injection            | `src/auth/auth.service.ts`                                             |
+| §9 DI Container      | Module providers/exports         | `src/users/users.module.ts`                                            |
+| §11 TypeORM Entities | `@Entity`, `@Column`             | `src/users/user.entity.ts`                                             |
+| §12 Repository API   | `find`, `save`, `remove`         | `src/users/users.service.ts`                                           |
+| §13 Relations        | One-to-Many, Many-to-Many        | `src/photos/photo.entity.ts`, `src/tags/tag.entity.ts`                 |
+| §13 QueryBuilder     | Complex queries                  | `src/analytics/analytics.service.ts`, `src/follows/follows.service.ts` |
+| §14 Interceptors     | `@Serialize()`, `@CurrentUser()` | `src/interceptors/serialize.interceptor.ts`, `src/auth/decorators/`    |
+| §15 Auth/Hashing     | bcrypt + JWT                     | `src/auth/auth.service.ts`                                             |
+| §16 Guards           | `JwtAuthGuard`                   | `src/auth/jwt-auth.guard.ts`, `src/auth/jwt.strategy.ts`               |
+| §17 Testing          | Unit + E2E                       | `src/auth/auth.service.spec.ts`, `test/auth.e2e-spec.ts`               |
+| §18 Config           | `ConfigModule` + `.env`          | `src/app.module.ts`, `.env`                                            |
+| §19 Modules          | Cross-module DI                  | `src/auth/auth.module.ts` imports `UsersModule`                        |
+| §20 Advanced DI      | DI container internals           | `src/follows/follows.module.ts` (multi-entity)                         |
+| §21 Migrations       | `synchronize` flag               | `src/app.module.ts`                                                    |
+| DevOps               | CI/CD, Docker, GHCR              | `.github/workflows/ci-cd.yml`, `Dockerfile`                            |
 
 ---
 
@@ -959,6 +1274,7 @@ Day 4:  Steps 8–9   (Interceptors, Relations)
 Day 5:  Steps 10–12 (Composite PKs, Self-referential, ManyToMany)
 Day 6:  Steps 13–14 (Analytics QueryBuilder, Testing)
 Day 7:  Steps 15–16 (Config, Migrations)
+Day 8:  Step 17     (CI/CD, Docker, GitHub Registry, Auto-Deploy)
 ```
 
 Each day: read the theory, open the files, answer the questions, do the hands-on task. The code is already written — your job is to **understand why** every line is there.
