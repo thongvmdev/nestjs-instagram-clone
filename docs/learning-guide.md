@@ -11,7 +11,7 @@ Mark each item with `[x]` when done. Each step has 3 checkboxes: **Read**, **Und
 
 | Step | Topic                                        | Read  | Understood | Task  |
 | ---- | -------------------------------------------- | ----- | ---------- | ----- |
-| 1    | NestJS Core Concepts & Project Structure     | `[ ]` | `[ ]`      | `[ ]` |
+| 1    | NestJS Core Concepts & Project Structure     | `[x]` | `[x]`      | `[x]` |
 | 2    | Request Handling & HTTP Decorators           | `[ ]` | `[ ]`      | `[ ]` |
 | 3    | Validation & DTOs                            | `[ ]` | `[ ]`      | `[ ]` |
 | 4    | Services, Repositories & TypeORM             | `[ ]` | `[ ]`      | `[ ]` |
@@ -30,16 +30,6 @@ Mark each item with `[x]` when done. Each step has 3 checkboxes: **Read**, **Und
 | 17   | CI/CD, Docker, GitHub Registry & Auto-Deploy | `[ ]` | `[ ]`      | `[ ]` |
 
 **Progress:** 0 / 17 steps completed
-
----
-
-## How to Use This Guide
-
-1. Read the **Theory** section (from course notes)
-2. Open the **Files to Read** in your editor
-3. Answer the **Understanding Check** questions yourself
-4. Try the **Hands-On Task** to reinforce the concept
-5. Check off all 3 boxes in the tracker above, then move to the next step
 
 ---
 
