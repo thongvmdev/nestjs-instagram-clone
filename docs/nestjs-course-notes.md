@@ -1,104 +1,102 @@
 # NestJS Course Notes
+
 > By Stephen Grider
+
+- Time: 4 week - 260813
+- Practice: Critical thinking
+
+- Tonight: 2h
+  > 1. [Introduction to NestJS](#1-introduction-to-nestjs)
+  >    Better than ExpressJs
+  > 2. [Project Structure & Conventions](#2-project-structure--conventions)
 
 ---
 
 ## Table of Contents
 
-1. [Introduction to NestJS](#1-introduction-to-nestjs)
-2. [Project Structure & Conventions](#2-project-structure--conventions)
+1. [x] [Introduction to NestJS](#1-introduction-to-nestjs)
+2. [x] [Project Structure & Conventions](#2-project-structure--conventions)
 3. [Request Handling & Decorators](#3-request-handling--decorators)
 4. [Validation & DTOs](#4-validation--dtos)
 5. [Repositories & Services](#5-repositories--services)
 6. [Dependency Injection](#6-dependency-injection)
 7. [Inversion of Control](#7-inversion-of-control)
-8. [Messages App (First Project)](#8-messages-app-first-project)
-9. [DI Container Deep Dive](#9-di-container-deep-dive)
-10. [Used Car Pricing API — Overview](#10-used-car-pricing-api--overview)
-11. [TypeORM & Entities](#11-typeorm--entities)
-12. [TypeORM Repository API](#12-typeorm-repository-api)
-13. [Associations / Relations](#13-associations--relations)
-14. [Interceptors & Serialization](#14-interceptors--serialization)
-15. [Authentication — Cookies & Hashing](#15-authentication--cookies--hashing)
-16. [Guards & Authorization](#16-guards--authorization)
-17. [Unit & E2E Testing](#17-unit--e2e-testing)
-18. [Configuration & Environment Variables](#18-configuration--environment-variables)
-19. [Modules & Cross-Module DI](#19-modules--cross-module-di)
-20. [Advanced DI (Optional)](#20-advanced-di-optional)
-21. [Migrations & Deployment](#21-migrations--deployment)
+8. [DI Container Deep Dive](#9-di-container-deep-dive)
+9. [TypeORM & Entities](#11-typeorm--entities)
+10. [TypeORM Repository API](#12-typeorm-repository-api)
+11. [Associations / Relations](#13-associations--relations)
+12. [Interceptors & Serialization](#14-interceptors--serialization)
+13. [Authentication — Cookies & Hashing](#15-authentication--cookies--hashing)
+14. [Guards & Authorization](#16-guards--authorization)
+15. [Unit & E2E Testing](#17-unit--e2e-testing)
+16. [Configuration & Environment Variables](#18-configuration--environment-variables)
+17. [Modules & Cross-Module DI](#19-modules--cross-module-di)
+18. [Advanced DI (Optional)](#20-advanced-di-optional)
+19. [Migrations & Deployment](#21-migrations--deployment)
 
 ---
 
-## 1. Introduction to NestJS
+## [x] 1. Introduction to NestJS
 
 ### Why NestJS?
+
 - Clear design patterns
 - Great integration for popular packages (`@nestjs/typeorm`, `@nestjs/passport`, `@nestjs/mongoose`, etc.)
 - Great documentation — [docs.nestjs.com](https://docs.nestjs.com)
 - Easy testing + code reuse through **dependency injection**
 
-### Getting Help
-- Udemy Q&A Discussion
-- Discord (link in next lecture)
-- DM via Udemy
-
-### Prerequisites
-- Familiarity with Node.js
-- TypeScript (check appendix if unfamiliar)
-
 ### NestJS 3rd-Party Package Integrations
 
-| NestJS Package | Wraps |
-|---|---|
-| `@nestjs/typeorm` | `typeorm` |
+| NestJS Package          | Wraps           |
+| ----------------------- | --------------- |
+| `@nestjs/typeorm`       | `typeorm`       |
 | `@nestjs/elasticsearch` | `elasticsearch` |
-| `@nestjs/mongoose` | `mongoose` |
-| `@nestjs/passport` | `passport` |
+| `@nestjs/mongoose`      | `mongoose`      |
+| `@nestjs/passport`      | `passport`      |
 
 ### Core Parts of a Nest App
 
-| Part | Role |
-|---|---|
-| **Controllers** | Handles incoming requests |
-| **Services** | Handles data access and business logic |
-| **Modules** | Groups together code |
-| **Pipes** | Validates incoming data |
-| **Filters** | Handles errors that occur during request handling |
-| **Guards** | Handles authentication |
+| Part             | Role                                                        |
+| ---------------- | ----------------------------------------------------------- |
+| **Controllers**  | Handles incoming requests                                   |
+| **Services**     | Handles data access and business logic                      |
+| **Modules**      | Groups together code                                        |
+| **Pipes**        | Validates incoming data                                     |
+| **Filters**      | Handles errors that occur during request handling           |
+| **Guards**       | Handles authentication                                      |
 | **Interceptors** | Adds extra logic to incoming requests or outgoing responses |
-| **Repositories** | Handles data stored in a DB |
+| **Repositories** | Handles data stored in a DB                                 |
 
 ### Request Lifecycle (Labeled)
 
 ```
 Request
-  → Pipe       (Validate data)
-  → Guard      (Make sure user is authenticated)
-  → Controller (Route the request to a function)
-  → Service    (Run business logic)
-  → Repository (Access a database)
+  → Middleware        (giống Express middleware, chạy trước tiên)
+  → Guard              (canActivate — kiểm tra quyền/auth, chặn sớm nếu false)
+  → Interceptor (phần "before")   (chạy trước khi vào route handler)
+  → Pipe               (validate/transform params, body, query)
+  → Controller handler (route method thực thi)
+  → Service            (business logic)
+  → Repository         (DB access)
+  ← Interceptor (phần "after")    (map/transform response, chạy sau khi handler return)
+  ← Exception Filter   (nếu có lỗi ném ra ở bất kỳ bước nào phía trên)
 → Response
 ```
 
 ### Key Dependencies
 
-| Package | Purpose |
-|---|---|
-| `@nestjs/core` | Contains vast majority of functions/classes needed from Nest |
-| `@nestjs/platform-express` | Lets Nest use Express JS for handling HTTP requests |
-| `reflect-metadata` | Helps make decorators work |
-
-### Getting Started
-1. Install dependencies
-2. Set up TypeScript compiler settings
-3. Create a Nest module and controller
-4. Start the app
+| Package                    | Purpose                                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| `@nestjs/core`             | Contains vast majority of functions/classes needed from Nest |
+| `@nestjs/platform-express` | Lets Nest use Express JS for handling HTTP requests          |
+| `reflect-metadata`         | Helps make decorators work                                   |
 
 ---
 
-## 2. Project Structure & Conventions
+## [x] 2. Project Structure & Conventions
 
 ### File Conventions
+
 - One class per file (some exceptions)
 - Filename template: `name.type_of_thing.ts`
   - e.g. `app.controller.ts`, `app.module.ts`
@@ -126,23 +124,25 @@ Request: GET '/'
 ```
 
 **Decorators explanation:**
+
 - `@Controller()` — Tells Nest we are about to define a controller
 - `@Get('/')` — Tells Nest to run this method anytime someone makes a GET request to `localhost:3000/`
 - Return value — Tells Nest to send the value back as the response
 
 ### HTTP Method Decorators
 
-| Decorator | Purpose |
-|---|---|
-| `@Get()` | Handle incoming GET requests |
-| `@Post()` | Handle incoming POST requests |
-| `@Patch()` | Handle incoming PATCH requests |
-| `@Put()` | Handle incoming PUT requests |
+| Decorator   | Purpose                         |
+| ----------- | ------------------------------- |
+| `@Get()`    | Handle incoming GET requests    |
+| `@Post()`   | Handle incoming POST requests   |
+| `@Patch()`  | Handle incoming PATCH requests  |
+| `@Put()`    | Handle incoming PUT requests    |
 | `@Delete()` | Handle incoming DELETE requests |
 
 ### Controller Route Options
 
 **Option 1 — Route in method decorator:**
+
 ```typescript
 @Controller()
 export class MessagesController {
@@ -153,6 +153,7 @@ export class MessagesController {
 ```
 
 **Option 2 — Route prefix in class decorator:**
+
 ```typescript
 @Controller('/messages')
 export class MessagesController {
@@ -164,14 +165,14 @@ export class MessagesController {
 
 ### Parameter Decorators
 
-| Decorator | Extracts |
-|---|---|
-| `@Body()` | Get the full body of an incoming request |
-| `@Body('name')` | Get a single property from the body |
-| `@Query()` | Get the full query string |
+| Decorator        | Extracts                                    |
+| ---------------- | ------------------------------------------- |
+| `@Body()`        | Get the full body of an incoming request    |
+| `@Body('name')`  | Get a single property from the body         |
+| `@Query()`       | Get the full query string                   |
 | `@Query('name')` | Get a single property from the query string |
-| `@Headers()` | Get the request headers |
-| `@Param('id')` | Get a route parameter |
+| `@Headers()`     | Get the request headers                     |
+| `@Param('id')`   | Get a route parameter                       |
 
 ### Anatomy of an HTTP Request
 
@@ -192,14 +193,15 @@ Mapped to decorators:
 
 Decorators are **functions intended to modify a class, property, method, accessor, or argument.**
 
-| Decorator Target | Called With |
-|---|---|
-| Class | The class |
-| Property | Class + property name |
-| Method | Class + method name + property descriptor |
-| Argument | Class + method name + index of argument |
+| Decorator Target | Called With                               |
+| ---------------- | ----------------------------------------- |
+| Class            | The class                                 |
+| Property         | Class + property name                     |
+| Method           | Class + method name + property descriptor |
+| Argument         | Class + method name + index of argument   |
 
 ### API Testing Tools
+
 - **Postman** — Easy to use, requires separate download + signup
 - **VSCode REST Client Extension** — Easy to use, requires VSCode only
 
@@ -209,13 +211,13 @@ Decorators are **functions intended to modify a class, property, method, accesso
 
 ### Built-in Exception Responses
 
-| Exception | Status Code |
-|---|---|
-| `BadRequestException` | 400 |
-| `ForbiddenException` | 403 |
-| `NotFoundException` | 404 |
-| `NotAcceptableException` | 406 |
-| `InternalServerErrorException` | 500 |
+| Exception                      | Status Code |
+| ------------------------------ | ----------- |
+| `BadRequestException`          | 400         |
+| `ForbiddenException`           | 403         |
+| `NotFoundException`            | 404         |
+| `NotAcceptableException`       | 406         |
+| `InternalServerErrorException` | 500         |
 
 ### ValidationPipe
 
@@ -229,6 +231,7 @@ POST /messages
 ```
 
 The pipe works by:
+
 1. Using `class-transformer` to turn the body into an instance of the DTO class
 2. Using `class-validator` to validate the instance
 3. If there are validation errors → respond immediately with error
@@ -244,11 +247,12 @@ The pipe works by:
 ```typescript
 // dto/create-message.dto.ts
 class CreateMessageDto {
-  message: string
+  message: string;
 }
 ```
 
 ### Key Libraries
+
 - [`github.com/typestack/class-validator`](https://github.com/typestack/class-validator)
 - [`github.com/typestack/class-transformer`](https://github.com/typestack/class-transformer)
 
@@ -267,6 +271,7 @@ addMessage(body) {}
 ### Whitelist / Extra Properties
 
 **Problem with extra properties:**
+
 ```
 Request: { email: 'a@a.com', password: undefined }  → Bug!
 ```
@@ -280,12 +285,14 @@ Request: { email: 'a@a.com', password: undefined }  → Bug!
 ## 5. Repositories & Services
 
 ### Repositories
+
 - Class that has methods to **directly interact with a database**
 - Usually a TypeORM repository, Mongoose/Mongo collection, or similar
 - Stores exactly **one type** of record
 - Common methods: `findOne()`, `findAll()`, `update()`, `remove()`
 
 ### Services
+
 - Class that has methods to directly interact with a database _(in simple apps)_
 - Can have methods to modify data in **any way imaginable**
 - Wrap up business logic and govern access to data
@@ -294,12 +301,12 @@ Request: { email: 'a@a.com', password: undefined }  → Bug!
 
 ### Services vs Repositories
 
-| | Service | Repository |
-|---|---|---|
-| Purpose | Business logic | Storage/data access |
-| Place in stack | #1 for business logic | #1 for storage-related logic |
-| Uses | One or more repositories | TypeORM entity, Mongoose schema, etc. |
-| Method names | Often similar to repo | findOne, findAll, create |
+|                | Service                  | Repository                            |
+| -------------- | ------------------------ | ------------------------------------- |
+| Purpose        | Business logic           | Storage/data access                   |
+| Place in stack | #1 for business logic    | #1 for storage-related logic          |
+| Uses           | One or more repositories | TypeORM entity, Mongoose schema, etc. |
+| Method names   | Often similar to repo    | findOne, findAll, create              |
 
 > **Gotcha:** In simple apps, services and repositories will look almost identical. The official Nest docs don't really mention something called "repositories."
 
@@ -323,6 +330,7 @@ This similarity is **common and OK!**
 > The DI system automatically figures out class dependencies and manages them for you.
 
 **Key points:**
+
 - Many classes depend on other classes to work correctly
 - The DI system assumes the **Inversion of Control** principle is good
 - Nest's DI system is not perfect — limited by TypeScript
@@ -351,6 +359,7 @@ Dependent → MessagesController
 ```
 
 **In Practice:**
+
 - Use `@Injectable()` decorator on each class
 - Add them to the module's list of providers
 - Nest automatically creates controller instances
@@ -391,11 +400,11 @@ While Testing:
 
 ### Bad → Better → Best
 
-| Approach | Description | Code |
-|---|---|---|
-| **Bad** | Tight coupling — MessagesService creates its own copy of MessagesRepository | `this.repo = new MessagesRepository()` |
-| **Better** | Still tight coupling, but we can configure MessagesRepository | Pass repo as constructor arg |
-| **Best** | Notification and Sender completely decoupled — uses interfaces | Constructor accepts interface, not concrete class |
+| Approach   | Description                                                                 | Code                                              |
+| ---------- | --------------------------------------------------------------------------- | ------------------------------------------------- |
+| **Bad**    | Tight coupling — MessagesService creates its own copy of MessagesRepository | `this.repo = new MessagesRepository()`            |
+| **Better** | Still tight coupling, but we can configure MessagesRepository               | Pass repo as constructor arg                      |
+| **Best**   | Notification and Sender completely decoupled — uses interfaces              | Constructor accepts interface, not concrete class |
 
 > **Note:** Due to limitations in TypeScript, Nest assumes you are using the "Better" method. (But you can trick Nest and TS into using "Best" with interfaces.)
 
@@ -426,15 +435,16 @@ This becomes unmanageable without DI.
 ## 8. Messages App (First Project)
 
 ### App Goal
+
 > Store and retrieve messages stored in a plain JSON file
 
 ### API Routes
 
-| Method | Route | Body | Description |
-|---|---|---|---|
-| GET | `/messages` | — | Return a list of all messages |
-| POST | `/messages` | `{ message: string }` | Create and store a new message |
-| GET | `/messages/:id` | — | Retrieve a message with the given ID |
+| Method | Route           | Body                  | Description                          |
+| ------ | --------------- | --------------------- | ------------------------------------ |
+| GET    | `/messages`     | —                     | Return a list of all messages        |
+| POST   | `/messages`     | `{ message: string }` | Create and store a new message       |
+| GET    | `/messages/:id` | —                     | Retrieve a message with the given ID |
 
 ### App Architecture
 
@@ -454,11 +464,11 @@ Request
 nest generate controller messages/messages --flat
 ```
 
-| Flag | Meaning |
-|---|---|
-| `controller` | Type of class to generate |
+| Flag                | Meaning                                                 |
+| ------------------- | ------------------------------------------------------- |
+| `controller`        | Type of class to generate                               |
 | `messages/messages` | Place file in `messages/` folder, call class `messages` |
-| `--flat` | Don't create an extra folder called `controllers` |
+| `--flat`            | Don't create an extra folder called `controllers`       |
 
 ### POST Request Flow (with Validation)
 
@@ -478,17 +488,18 @@ User sends POST to '/'
 
 ### Services vs Repositories (Side-by-Side)
 
-| | Services | Repositories |
-|---|---|---|
-| Focus | Business logic | Storage/data logic |
-| Uses | One or more repositories | TypeORM entity, Mongoose schema |
-| Method style | Various | findOne, save, create, remove |
+|              | Services                 | Repositories                    |
+| ------------ | ------------------------ | ------------------------------- |
+| Focus        | Business logic           | Storage/data logic              |
+| Uses         | One or more repositories | TypeORM entity, Mongoose schema |
+| Method style | Various                  | findOne, save, create, remove   |
 
 ### IoC Principle Revisited
 
 > Classes should not create instances of its dependencies on its own.
 
 **Bad:**
+
 ```typescript
 // MessagesService creates its own copy of MessagesRepository
 class MessagesService {
@@ -497,6 +508,7 @@ class MessagesService {
 ```
 
 **Better:**
+
 ```typescript
 class MessagesService {
   constructor(repo: MessagesRepository) {
@@ -506,9 +518,11 @@ class MessagesService {
 ```
 
 **Best:**
+
 ```typescript
 class MessagesService {
-  constructor(repo: MessagesRepoInterface) { // accepts interface
+  constructor(repo: MessagesRepoInterface) {
+    // accepts interface
     this.repo = repo;
   }
 }
@@ -519,6 +533,7 @@ class MessagesService {
 ## 10. Used Car Pricing API — Overview
 
 ### App Features
+
 - Users sign up with email/password
 - Users get an **estimate** for how much their car is worth (make/model/year/mileage)
 - Users can **report** what they sold their vehicles for
@@ -526,13 +541,13 @@ class MessagesService {
 
 ### API Routes
 
-| Method | Route | Body / QS | Description |
-|---|---|---|---|
-| POST | `/auth/signup` | `{ email, password }` | Create a new user and sign in |
-| POST | `/auth/signin` | `{ email, password }` | Sign in as an existing user |
-| GET | `/reports` | QS: make, model, year, mileage, lng, lat | Get an estimate for car value |
-| POST | `/reports` | `{ make, model, year, mileage, lng, lat, price }` | Report how much a vehicle sold for |
-| PATCH | `/reports/:id` | `{ approved }` | Approve or reject a report |
+| Method | Route          | Body / QS                                         | Description                        |
+| ------ | -------------- | ------------------------------------------------- | ---------------------------------- |
+| POST   | `/auth/signup` | `{ email, password }`                             | Create a new user and sign in      |
+| POST   | `/auth/signin` | `{ email, password }`                             | Sign in as an existing user        |
+| GET    | `/reports`     | QS: make, model, year, mileage, lng, lat          | Get an estimate for car value      |
+| POST   | `/reports`     | `{ make, model, year, mileage, lng, lat, price }` | Report how much a vehicle sold for |
+| PATCH  | `/reports/:id` | `{ approved }`                                    | Approve or reject a report         |
 
 ### Module Structure
 
@@ -550,10 +565,10 @@ AppModule
 
 ### ORM Choice
 
-| Phase | Database | ORM |
-|---|---|---|
-| Development | SQLite | TypeORM |
-| Production | Postgres | TypeORM |
+| Phase       | Database | ORM     |
+| ----------- | -------- | ------- |
+| Development | SQLite   | TypeORM |
+| Production  | Postgres | TypeORM |
 
 > Nest works fine with any ORM, but works well out of the box with **TypeORM** and **Mongoose**.
 
@@ -627,20 +642,20 @@ AppModule
 
 ### Users Repository API
 
-| Method | Behavior |
-|---|---|
-| `create(User)` | Creates, but does **not** save, a User entity |
-| `save(User)` without ID | Creates a new record |
-| `save(User)` with ID | Updates existing record |
-| `findOne(User)` | Find a user with the given filter criteria |
-| `remove(User)` | Remove a user |
+| Method                  | Behavior                                      |
+| ----------------------- | --------------------------------------------- |
+| `create(User)`          | Creates, but does **not** save, a User entity |
+| `save(User)` without ID | Creates a new record                          |
+| `save(User)` with ID    | Updates existing record                       |
+| `findOne(User)`         | Find a user with the given filter criteria    |
+| `remove(User)`          | Remove a user                                 |
 
 ### `save()` vs `insert()` / `update()`
 
-| Method | Hooks Executed? |
-|---|---|
-| `save(Entity)` | ✅ Yes |
-| `insert()` / `update()` | ❌ No |
+| Method                  | Hooks Executed? |
+| ----------------------- | --------------- |
+| `save(Entity)`          | ✅ Yes          |
+| `insert()` / `update()` | ❌ No           |
 
 > **Best practice:** Use `save()` and `remove()` (with entity instances) so that lifecycle hooks are triggered.
 
@@ -659,15 +674,15 @@ Request { email: 'a@a.com', password: 'a' }
 
 ### Extra CRUD Routes (for learning TypeORM)
 
-| Method | Route | Description |
-|---|---|---|
-| POST | `/auth/signup` | Create a new user |
-| GET | `/auth/:id` | Find a user with given id |
-| PATCH | `/auth/:id` | Update a user with given id |
-| DELETE | `/auth/:id` | Delete user with given id |
-| GET | `/auth?email=...` | Find all users with given email |
+| Method | Route             | Description                     |
+| ------ | ----------------- | ------------------------------- |
+| POST   | `/auth/signup`    | Create a new user               |
+| GET    | `/auth/:id`       | Find a user with given id       |
+| PATCH  | `/auth/:id`       | Update a user with given id     |
+| DELETE | `/auth/:id`       | Delete user with given id       |
+| GET    | `/auth?email=...` | Find all users with given email |
 
-> *(Not needed for the real app — added to better understand TypeORM)*
+> _(Not needed for the real app — added to better understand TypeORM)_
 
 ---
 
@@ -677,14 +692,14 @@ Request { email: 'a@a.com', password: 'a' }
 typeorm.io/#/repository-api
 ```
 
-| Method | Description |
-|---|---|
-| `create()` | Makes a new instance of an entity, but does **not** persist it to the DB |
-| `save()` | Adds or updates a record to the DB |
-| `find()` | Runs a query and returns a list of entities |
-| `findOne()` | Run a query, returning the first record matching the search criteria |
-| `remove()` | Remove a record from the DB |
-| `createQueryBuilder()` | Returns a query builder for complex queries |
+| Method                 | Description                                                              |
+| ---------------------- | ------------------------------------------------------------------------ |
+| `create()`             | Makes a new instance of an entity, but does **not** persist it to the DB |
+| `save()`               | Adds or updates a record to the DB                                       |
+| `find()`               | Runs a query and returns a list of entities                              |
+| `findOne()`            | Run a query, returning the first record matching the search criteria     |
+| `remove()`             | Remove a record from the DB                                              |
+| `createQueryBuilder()` | Returns a query builder for complex queries                              |
 
 ### Error Handling
 
@@ -708,11 +723,11 @@ if (user not found) → throw new NotFoundException()
 
 ### SQL Relationship Types
 
-| Type | Examples |
-|---|---|
-| One-to-One | Country → Capital, Passport → Person |
+| Type                      | Examples                                          |
+| ------------------------- | ------------------------------------------------- |
+| One-to-One                | Country → Capital, Passport → Person              |
 | One-to-Many / Many-to-One | Customers → Orders, Car → Parts, Country → Cities |
-| Many-to-Many | Trains ↔ Riders, Classes ↔ Students |
+| Many-to-Many              | Trains ↔ Riders, Classes ↔ Students               |
 
 ### Our App: User ↔ Report
 
@@ -734,14 +749,14 @@ User id=2
 
 ```typescript
 class User {
-  @OneToMany(() => Report, report => report.user)
+  @OneToMany(() => Report, (report) => report.user)
   reports: Report[];
   // Function that returns the target entity
   // Given a user, here's how to get their reports
 }
 
 class Report {
-  @ManyToOne(() => User, user => user.reports)
+  @ManyToOne(() => User, (user) => user.reports)
   user: User;
   // Function that returns the target entity
   // Given a report, here's how to get a user
@@ -750,9 +765,9 @@ class Report {
 
 ### Database Impact
 
-| Decorator | Changes DB? |
-|---|---|
-| `@OneToMany()` on User | Does **not** change the Users table |
+| Decorator                | Changes DB?                                          |
+| ------------------------ | ---------------------------------------------------- |
+| `@OneToMany()` on User   | Does **not** change the Users table                  |
 | `@ManyToOne()` on Report | **Changes** the Reports table (adds `userId` column) |
 
 > **Important:** Associations are **not automatically fetched** when you fetch a record.
@@ -779,6 +794,7 @@ Cookie: asdfj14
 ### Price Estimate Algorithm
 
 Find reports for the same make/model that are:
+
 - Within ±5 degrees of given longitude/latitude
 - Within 3 years of given year
 - Ordered by closest mileage
@@ -790,14 +806,14 @@ Find reports for the same make/model that are:
 typeorm.io/#/select-query-builder
 ```
 
-| Method | Purpose |
-|---|---|
-| `.where()` | Filter out some rows |
-| `.andWhere()` | Add another 'where' filter |
-| `.orderBy()` | Order rows by some criteria |
-| `.select()` | Pull out specific data from filtered/sorted rows |
-| `.getOne()` / `.getRawOne()` | Execute query, return one result |
-| `.getMany()` / `.getRawMany()` | Execute query, return many results |
+| Method                         | Purpose                                          |
+| ------------------------------ | ------------------------------------------------ |
+| `.where()`                     | Filter out some rows                             |
+| `.andWhere()`                  | Add another 'where' filter                       |
+| `.orderBy()`                   | Order rows by some criteria                      |
+| `.select()`                    | Pull out specific data from filtered/sorted rows |
+| `.getOne()` / `.getRawOne()`   | Execute query, return one result                 |
+| `.getMany()` / `.getRawMany()` | Execute query, return many results               |
 
 ---
 
@@ -847,6 +863,7 @@ class CustomInterceptor {
 ### Interceptor Scope
 
 Interceptors can be applied to:
+
 - A **single handler**
 - **All handlers** in a controller
 - **Globally** (recommended for current user interceptor)
@@ -868,14 +885,14 @@ User Entity Instance
 
 ### Auth System Features
 
-| Feature | Tool |
-|---|---|
-| Sign up | Handler + UsersService |
-| Sign in | Handler + AuthService |
-| Sign out | Handler |
-| Return current user | Handler + Interceptor + Decorator |
-| Reject unauthenticated requests | Guard |
-| Tell handler who the current user is | Interceptor + Decorator |
+| Feature                              | Tool                              |
+| ------------------------------------ | --------------------------------- |
+| Sign up                              | Handler + UsersService            |
+| Sign in                              | Handler + AuthService             |
+| Sign out                             | Handler                           |
+| Return current user                  | Handler + Interceptor + Decorator |
+| Reject unauthenticated requests      | Guard                             |
+| Tell handler who the current user is | Interceptor + Decorator           |
 
 ### Cookie-Based Auth Flow
 
@@ -917,12 +934,15 @@ Cookie: ey4ji1p45152
 ### Auth Service Architecture
 
 **Option 1 (Bad):** Add `signup()` and `signin()` directly to `UsersService`
+
 ```
 UsersService { create, findOne, find, update, remove, signup, signin, setPreferences, resetPassword... }
 ```
+
 → Becomes too large
 
 **Option 2 (Good):** Create a separate `AuthService`
+
 ```
 UsersModule
   ├── UsersController
@@ -936,6 +956,7 @@ UsersModule
 **Why hash?** Storing plain text passwords is dangerous.
 
 **Hashing properties:**
+
 - Very small changes to input result in a completely different hash
 - Hashing **cannot be reversed** — you can't get the input from the output
 
@@ -979,10 +1000,10 @@ Signin with Salt:
 
 ### Authentication vs Authorization
 
-| | Who |
-|---|---|
-| **Authentication** | Figure out **who** is making a request |
-| **Authorization** | Figure out if the person making the request is **allowed** to make it |
+|                    | Who                                                                   |
+| ------------------ | --------------------------------------------------------------------- |
+| **Authentication** | Figure out **who** is making a request                                |
+| **Authorization**  | Figure out if the person making the request is **allowed** to make it |
 
 ### AuthGuard
 
@@ -1027,7 +1048,7 @@ Request
 
 ### CurrentUser Decorator + Interceptor
 
-**Problem:** Param decorators exist *outside* the DI system, so a custom decorator can't directly get an instance of `UsersService`.
+**Problem:** Param decorators exist _outside_ the DI system, so a custom decorator can't directly get an instance of `UsersService`.
 
 **Solution:** Make a `CurrentUserInterceptor` that fetches the current user and stores it on the request object. Then the `@CurrentUser()` decorator reads from the request.
 
@@ -1045,10 +1066,10 @@ CurrentUserInterceptor (Global)
 
 ### Types of Tests
 
-| Type | Description |
-|---|---|
-| **Unit Testing** | Make sure individual methods on a class work correctly |
-| **Integration (E2E) Testing** | Test the full flow of a feature |
+| Type                          | Description                                            |
+| ----------------------------- | ------------------------------------------------------ |
+| **Unit Testing**              | Make sure individual methods on a class work correctly |
+| **Integration (E2E) Testing** | Test the full flow of a feature                        |
 
 ### Unit Testing with Fake Services
 
@@ -1168,12 +1189,13 @@ dotenv reads the file → { DB_NAME: 'db.sqlite', DB_PASSWORD: 'asdf' }
 
 ### Conflicting Advice
 
-| Source | Says |
-|---|---|
-| Nest Docs | Multiple .env files (with different names) are OK |
-| dotenv Docs | Never create more than one .env file |
+| Source      | Says                                              |
+| ----------- | ------------------------------------------------- |
+| Nest Docs   | Multiple .env files (with different names) are OK |
+| dotenv Docs | Never create more than one .env file              |
 
 > **Questions to consider:**
+>
 > - How does a `.env` file get created in a production environment?
 > - How can we have different config in a local environment?
 
@@ -1248,7 +1270,7 @@ CPU Module
 
 ### Nest Official Note
 
-> *"We want to emphasize that modules are **strongly** recommended as an effective way to organize your components."*
+> _"We want to emphasize that modules are **strongly** recommended as an effective way to organize your components."_
 > — Nest Official Docs
 
 ### Module File Naming Convention
@@ -1288,7 +1310,7 @@ Power Module
 CPU Module
   imports: [PowerModule]
   providers: [CpuService, PowerService]
-  DI Container: 
+  DI Container:
     CpuService  → PowerService
     PowerService (imported from PowerModule)
 ```
@@ -1368,7 +1390,7 @@ Migration File #2
 5. DB is updated! Restart the development server
 ```
 
-> **Note:** TypeORM CLI executes *only* entity files + the migration file, then connects to the DB and makes changes. **Nothing related to Nest gets executed!**
+> **Note:** TypeORM CLI executes _only_ entity files + the migration file, then connects to the DB and makes changes. **Nothing related to Nest gets executed!**
 
 ### TypeORM CLI Configuration
 
@@ -1398,4 +1420,4 @@ Your Computer
 
 ---
 
-*End of Notes*
+_End of Notes_
