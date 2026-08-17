@@ -2,13 +2,14 @@
 
 > By Stephen Grider
 
-- Time: 4 week - 260813
-- Practice: Critical thinking
+## - Time: 4 week - 260813
 
-- Tonight: 2h
-  > 1. [Introduction to NestJS](#1-introduction-to-nestjs)
-  >    Better than ExpressJs
-  > 2. [Project Structure & Conventions](#2-project-structure--conventions)
+### - Practice: Critical thinking | Knowledge > Work well with AI.
+
+### Note progress
+
+- Decorators:
+  > [x] Concept - Class decorator
 
 ---
 

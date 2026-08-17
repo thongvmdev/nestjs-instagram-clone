@@ -26,6 +26,101 @@ Trước decorator, muốn thêm hành vi chung (logging, validation, DI...) cho
 
 Đây là ý tưởng của **Aspect-Oriented Programming (AOP)**.
 
+### Ví dụ: logging thủ công vs logging bằng decorator
+
+Không có decorator, muốn log lại mọi lời gọi method, bạn phải viết một hàm `withLogging` riêng rồi **tự tay bọc lại từng method** ở nơi sử dụng:
+
+```typescript
+class UserService {
+  getUser(id: string) {
+    return { id, name: 'Nguyen Van A' };
+  }
+
+  deleteUser(id: string) {
+    return { success: true };
+  }
+}
+
+// Hàm wrapper riêng biệt để log
+function withLogging<T extends (...args: any[]) => any>(fn: T, name: string): T {
+  return ((...args: any[]) => {
+    console.log(`[LOG] Calling ${name} with args: ${JSON.stringify(args)}`);
+    const start = Date.now();
+    const result = fn(...args);
+    console.log(`[LOG] ${name} returned in ${Date.now() - start}ms`);
+    return result;
+  }) as T;
+}
+
+// Phải "bọc" lại thủ công ở nơi sử dụng
+const service = new UserService();
+const getUserWithLog = withLogging(service.getUser.bind(service), 'getUser');
+const deleteUserWithLog = withLogging(service.deleteUser.bind(service), 'deleteUser');
+
+getUserWithLog('123');
+deleteUserWithLog('456');
+```
+
+Cách này có nhiều điểm bất tiện:
+
+- **Tách rời khỏi định nghĩa gốc**: nhìn vào `class UserService` không ai biết `getUser`/`deleteUser` có bị log hay không — phải lần ra tận nơi gọi `withLogging` mới thấy.
+- **Dễ quên/thiếu nhất quán**: thêm method mới (`updateUser`) mà quên bọc `withLogging` là logging biến mất, không có gì cảnh báo.
+- **Phải `.bind(service)` thủ công** để giữ đúng `this`, và phải đặt tên biến mới (`getUserWithLog`) cho mọi nơi gọi thay vì gọi thẳng `service.getUser`.
+- **Không tái sử dụng được ở cấp class**: nếu muốn log toàn bộ method của một class, phải lặp lại thao tác bọc cho từng method.
+
+Với method decorator, logic logging được khai báo **ngay tại chỗ định nghĩa**, class chỉ cần "dán nhãn":
+
+```typescript
+function Log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const original = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`[LOG] Calling ${propertyKey} with args: ${JSON.stringify(args)}`);
+    const start = Date.now();
+    const result = original.apply(this, args);
+    console.log(`[LOG] ${propertyKey} returned in ${Date.now() - start}ms`);
+    return result;
+  };
+  return descriptor;
+}
+
+class UserService {
+  @Log
+  getUser(id: string) {
+    return { id, name: 'Nguyen Van A' };
+  }
+
+  @Log
+  deleteUser(id: string) {
+    return { success: true };
+  }
+}
+
+const service = new UserService();
+service.getUser('123'); // gọi trực tiếp, không cần biến trung gian
+service.deleteUser('456');
+```
+
+Lợi ích rõ ràng hơn:
+
+- **Đọc code là biết hành vi**: thấy `@Log` ngay trên method là biết nó được log, không cần đi tìm chỗ bọc ở đâu đó.
+- **Không thể quên**: thêm method mới chỉ cần gắn `@Log`, không phụ thuộc vào việc có nhớ bọc ở nơi gọi hay không.
+- **Gọi tự nhiên**: `service.getUser('123')` — không cần biến `getUserWithLog`, không cần `.bind(service)` thủ công vì decorator đã xử lý `this` qua `original.apply(this, args)`.
+- **Tái sử dụng cực dễ**: cùng một `@Log` áp lên bao nhiêu method/class cũng được, chỉ tốn 1 dòng mỗi chỗ.
+
+Đây chính là giá trị cốt lõi của decorator: biến một cross-cutting concern (logging, validation, caching...) từ chỗ phải "nhớ và bọc thủ công ở từng nơi sử dụng" thành một khai báo tường minh, đặt cạnh chính logic mà nó tác động.
+
+**Tóm tắt nguyên lý:**
+
+Decorator không tạo hàm mới đứng riêng rồi gán vào biến khác (như cách thủ công `withLogging()` phải làm, nên mới cần `.bind()` để giữ `this`). Thay vào đó, decorator **sửa trực tiếp descriptor của method ngay trên `prototype`**:
+
+1. Lấy hàm gốc ra (`original = descriptor.value`)
+2. Tạo hàm mới bọc quanh nó, bên trong gọi `original.apply(this, args)`
+3. Gán đè hàm mới vào đúng vị trí cũ (`descriptor.value = ...` rồi `Object.defineProperty`)
+
+Vì method vẫn nằm nguyên trên `prototype` và vẫn được gọi theo cú pháp `obj.method()`, nên `this` được JavaScript tự động bind đúng theo cơ chế gọi method thông thường — **không cần `.bind()` thủ công**, chỉ cần `apply(this, args)` để truyền `this` đó xuống hàm gốc bên trong.
+
+→ Bản chất: decorator = tự động hóa việc "thay ruột hàm, giữ nguyên vỏ", khác với cách thủ công là "tạo hàm mới, tách khỏi vỏ cũ".
+
 ---
 
 ## 2. Class Decorator hoạt động như thế nào?
