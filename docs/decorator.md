@@ -312,6 +312,79 @@ service.processPayment('user1', 100, 20); // ✓
 service.processPayment('user2', -50, 10); // ✗ throws
 ```
 
+**JavaScript sau khi compile (với experimentalDecorators: true)**
+
+```js
+'use strict';
+var __decorate =
+  (this && this.__decorate) ||
+  function (decorators, target, key, desc) {
+    var c = arguments.length,
+      r =
+        c < 3
+          ? target
+          : desc === null
+            ? (desc = Object.getOwnPropertyDescriptor(target, key))
+            : desc,
+      d;
+    if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function')
+      r = Reflect.decorate(decorators, target, key, desc);
+    else
+      for (var i = decorators.length - 1; i >= 0; i--)
+        if ((d = decorators[i]))
+          r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return (c > 3 && r && Object.defineProperty(target, key, r), r);
+  };
+var __param =
+  (this && this.__param) ||
+  function (paramIndex, decorator) {
+    return function (target, key) {
+      decorator(target, key, paramIndex);
+    };
+  };
+
+const positiveParams = new Map();
+
+function Positive(target, methodName, index) {
+  const key = `${target.constructor.name}_${methodName}`;
+  if (!positiveParams.has(key)) positiveParams.set(key, []);
+  positiveParams.get(key).push(index);
+}
+
+function ValidateParams(target, methodName, descriptor) {
+  const original = descriptor.value;
+
+  descriptor.value = function (...args) {
+    const key = `${target.constructor.name}_${methodName}`;
+    const indexes = positiveParams.get(key) || [];
+
+    for (const i of indexes) {
+      if (args[i] <= 0)
+        throw new Error(`Argument at index ${i} must be positive`);
+    }
+
+    return original.apply(this, args);
+  };
+}
+
+class PaymentService {
+  processPayment(userId, amount, tax) {
+    console.log('Payment processed:', userId, amount, tax);
+  }
+}
+
+__decorate(
+  [ValidateParams, __param(1, Positive), __param(2, Positive)],
+  PaymentService.prototype,
+  'processPayment',
+  null,
+);
+
+const service = new PaymentService();
+service.processPayment('user1', 100, 20); // ✓
+service.processPayment('user2', -50, 10); // ✗ throws
+```
+
 **Full execution timeline:**
 
 ```
