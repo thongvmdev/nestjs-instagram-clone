@@ -24,7 +24,8 @@
   > [x] Property decorator
   > [x] `Need to revise full flow again, see content below`
   > [x] Validate and DTO with ZOD
-  > [] DI - Related with deco (next ln)
+  > [x] DI - Related with deco (next ln)
+  > [] Revise DI, IoC > `https://hanu-nus.com/thongvmdev_M9VMO/dependency-injection-and-ioc-greater-tu-nguyen-ly-djen-nestjs-c2dc841757f6`
 
 # - Avoid this pattern : AI work without my understanding
 
@@ -34,11 +35,11 @@
 
 1. [x] [Introduction to NestJS](#1-introduction-to-nestjs)
 2. [x] [Project Structure & Conventions](#2-project-structure--conventions)
-3. [Request Handling & Decorators](#3-request-handling--decorators)
-4. [Validation & DTOs](#4-validation--dtos)
+3. [x] [Request Handling & Decorators](#3-request-handling--decorators)
+4. [x] [Validation & DTOs](#4-validation--dtos)
 5. [Repositories & Services](#5-repositories--services)
 6. [Dependency Injection & Injectable](#6-dependency-injection) x
-7. [Inversion of Control](#7-inversion-of-control)
+7. [Inversion of Control](#7-inversion-of-control) x
 8. [DI Container Deep Dive](#9-di-container-deep-dive)
 9. [TypeORM & Entities](#11-typeorm--entities)
 10. [TypeORM Repository API](#12-typeorm-repository-api)
@@ -131,7 +132,7 @@ app.module.ts      → class AppModule {}
 
 ---
 
-## 3. Request Handling & Decorators
+## [x] 3. Request Handling & Decorators
 
 ### How a Basic Controller Works
 
@@ -225,7 +226,7 @@ Decorators are **functions intended to modify a class, property, method, accesso
 
 ---
 
-## 4. Validation & DTOs
+## [x] 4. Validation & DTOs
 
 ### Built-in Exception Responses
 
